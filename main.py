@@ -48,8 +48,8 @@ if __name__ == '__main__':
     # python main.py -task make_data -n_cpus 2
     elif args.task == 'make_data':
         os.chdir(PROJECT_DIR + '/src')
-        os.system("python make_data.py -task df")
-        os.system(f"python make_data.py -task train_bert -target_summary_sent ext -n_cpus {args.n_cpus}")
+        # os.system("python make_data.py -task df")
+        #os.system(f"python make_data.py -task train_bert -target_summary_sent ext -n_cpus {args.n_cpus}")
         os.system(f"python make_data.py -task test_bert -n_cpus {args.n_cpus}")
 
     # python main.py -task train -target_summary_sent abs -visible_gpus 0

@@ -190,7 +190,7 @@ if __name__ == '__main__':
         # import data
         with open(f'{RAW_DATA_DIR}/train_2.jsonl', 'r', encoding='utf-8') as json_file:#수정필수
             train_json_list = list(json_file)
-        with open(f'{RAW_DATA_DIR}/valid_2.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
+        with open(f'{RAW_DATA_DIR}/test.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
             test_json_list = list(json_file) 
 
         trains = []
@@ -272,6 +272,7 @@ if __name__ == '__main__':
         os.makedirs(LOG_DIR, exist_ok=True)
 
         test_df = pd.read_pickle(f"{RAW_DATA_DIR}/test_df.pickle")
+        # test_df = pd.read_pickle(f'C:/Users/hws07/Desktop/python_folder/KoBertSum/ext/data/raw/test_df.pickle')
 
         ## make json file
         # 동일한 파일명 존재하면 덮어쓰는게 아니라 ignore됨에 따라 폴더 내 삭제 후 만들어주기

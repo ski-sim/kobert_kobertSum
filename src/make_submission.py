@@ -26,7 +26,7 @@ RESULT_DIR = f'{PROJECT_DIR}/{PROBLEM}/results'
 # python make_submission.py result_1209_1236_step_7000.candidate
 if __name__ == '__main__':
     # test set
-    with open(RAW_DATA_DIR + '/extractive_test_v2.jsonl', 'r') as json_file:
+    with open(RAW_DATA_DIR + '/test.jsonl', 'r',encoding='utf-8') as json_file:
         json_list = list(json_file)
 
     tests = []
@@ -50,6 +50,9 @@ if __name__ == '__main__':
 
     result_df = pd.merge(test_df, pd.DataFrame(test_pred_list), how="left", left_index=True, right_index=True)
     result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[row['sum_sents_idxes']])) , axis=1)
+    print(result_df['sum_sents_idxes'])
+    result_df.to_csv(RAW_DATA_DIR + '/extractive_sample_submission_v2.csv')
+    # result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[list(filter(lambda x: x is not None, row['sum_sents_idxes']))])) , axis=1)
     submit_df = pd.read_csv(RAW_DATA_DIR + '/extractive_sample_submission_v2.csv')
     submit_df.drop(['summary'], axis=1, inplace=True)
 

@@ -8,3 +8,4 @@ myvenv2
 ext/
 train_2~3sent/
 valid_2~3sent/
+models/
