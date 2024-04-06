@@ -314,6 +314,11 @@ class BertData():
         self.cls_vid = self.tokenizer.token2idx[self.cls_token]
         self.pad_vid = self.tokenizer.token2idx[self.pad_token]
 
+
+        #self.sep_vid = self.tokenizer.convert_tokens_to_ids([self.sep_token])[0]
+        #self.cls_vid = self.tokenizer.convert_tokens_to_ids([self.cls_token])[0]
+        #self.pad_vid = self.tokenizer.convert_tokens_to_ids([self.pad_token])[0]
+
     def preprocess(self, src, tgt, sent_labels, use_bert_basic_tokenizer=False, is_test=False):
 
         if ((not is_test) and len(src) == 0):
@@ -409,7 +414,9 @@ def _format_to_bert(params):
 
     bert = BertData(args)
     logger.info('Processing %s' % json_file)
-    jobs = json.load(open(json_file))
+    #jobs = json.load(open(json_file))
+    jobs = json.load(open(json_file, encoding='utf-8'))
+
     datasets = []
     for d in jobs:
         source, tgt = d['src'], d['tgt']

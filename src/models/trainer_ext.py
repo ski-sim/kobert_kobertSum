@@ -30,6 +30,7 @@ def build_trainer(args, device_id, model, optim):
     """
 
     grad_accum_count = args.accum_count
+
     n_gpu = args.world_size
 
     if device_id >= 0:
@@ -183,15 +184,14 @@ class Trainer(object):
             for batch in valid_iter:
                 src = batch.src
                 labels = batch.src_sent_labels
+
                 segs = batch.segs
                 clss = batch.clss
                 mask = batch.mask_src
                 mask_cls = batch.mask_cls
 
                 sent_scores, mask = self.model(src, segs, clss, mask, mask_cls)
-                # print(labels)
-                # print(sent_scores)
-                # print(mask)
+                
                 loss = self.loss(sent_scores, labels.float())
                 loss = (loss * mask.float()).sum()
                 batch_stats = Statistics(float(loss.cpu().data.numpy()), len(labels))

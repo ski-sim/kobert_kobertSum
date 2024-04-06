@@ -167,8 +167,8 @@ def create_json_files(df, data_type='train', target_summary_sent=None, path=''):
         #     break
         # break
         json_string = json.dumps(json_list, indent=4, ensure_ascii=False)
-        #print(json_string)
-        with open(file_name, 'w') as json_file:
+        
+        with open(file_name, 'w', encoding='utf-8') as json_file: # 수정필수
             json_file.write(json_string)
 
 
@@ -188,10 +188,10 @@ if __name__ == '__main__':
         os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
         # import data
-        with open(f'{RAW_DATA_DIR}/train.jsonl', 'r') as json_file:
+        with open(f'{RAW_DATA_DIR}/train_2.jsonl', 'r', encoding='utf-8') as json_file:#수정필수
             train_json_list = list(json_file)
-        with open(f'{RAW_DATA_DIR}/extractive_test_v2.jsonl', 'r') as json_file:
-            test_json_list = list(json_file)
+        with open(f'{RAW_DATA_DIR}/valid_2.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
+            test_json_list = list(json_file) 
 
         trains = []
         for json_str in train_json_list:
@@ -204,7 +204,14 @@ if __name__ == '__main__':
 
         # Convert raw data to df
         df = pd.DataFrame(trains)
-        df['extractive_sents'] = df.apply(lambda row: list(np.array(row['article_original'])[row['extractive']]) , axis=1)
+
+        #def extract_valid_sentences(row):
+        #    valid_indices = [i for i in row['extractive'] if i is not None]
+        #    print("valid_indices",list(np.array(row['article_original'])[valid_indices]))
+        #    return list(np.array(row['article_original'])[valid_indices])
+        # apply 메서드를 사용하여 함수 적용
+        #df['extractive_sents'] = df.apply(extract_valid_sentences, axis=1) # 수정 필수
+
 
         # random split
         train_df = df.sample(frac=0.95,random_state=42) #random state is a seed value
@@ -289,3 +296,5 @@ if __name__ == '__main__':
             + f" -save_path {bert_data_dir}"
             + f" -log_file {LOG_PREPO_FILE}"
             + f" -lower -n_cpus {args.n_cpus}")
+        
+        

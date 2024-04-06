@@ -149,7 +149,7 @@ def validate_ext(args, device_id):
 
 
 def validate(args, device_id, pt, step):
-    device = "cpu" if args.visible_gpus == '-1' else "cuda"
+    device = "cpu" #if args.visible_gpus == '-1' else "cuda" 
     if (pt != ''):
         test_from = pt
     else:
@@ -160,7 +160,7 @@ def validate(args, device_id, pt, step):
     for k in opt.keys():
         if (k in model_flags):
             setattr(args, k, opt[k])
-    print(args)
+    #print(args)
 
     model = ExtSummarizer(args, device, checkpoint)
     model.eval()
@@ -206,16 +206,16 @@ def train_ext(args, device_id):
 def train_single_ext(args, device_id):
     init_logger(args.log_file)
 
-    device = "cpu" if args.visible_gpus == '-1' else "cuda"
+    device = "cpu" #if args.visible_gpus == '-1' else "cuda" # 수정 필수
     logger.info('Device ID %d' % device_id)
     logger.info('Device %s' % device)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
     torch.backends.cudnn.deterministic = True
-
-    if device_id >= 0:
-        torch.cuda.set_device(device_id)
-        torch.cuda.manual_seed(args.seed)
+    #수정필수
+    #if device_id >= 0:
+    #    torch.cuda.set_device(device_id)
+    #    torch.cuda.manual_seed(args.seed)
 
     torch.manual_seed(args.seed)
     random.seed(args.seed)
@@ -239,7 +239,7 @@ def train_single_ext(args, device_id):
     model = ExtSummarizer(args, device, checkpoint)
     optim = model_builder.build_optim(args, model, checkpoint)
 
-    logger.info(model)
+    #logger.info(model)
 
     trainer = build_trainer(args, device_id, model, optim)
     trainer.train(train_iter_fct, args.train_steps)

@@ -23,9 +23,10 @@ RESULT_DIR = f'{PROJECT_DIR}/{PROBLEM}/results'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-task", default='test', type=str, choices=['install', 'make_data', 'train', 'valid', 'test'])
+    parser.add_argument("-task", default='train', type=str, choices=['install', 'make_data', 'train', 'valid', 'test'])
+
     parser.add_argument("-n_cpus", default='2', type=str)
-    parser.add_argument("-target_summary_sent", default='abs', type=str)
+    parser.add_argument("-target_summary_sent", default='ext', type=str)
     parser.add_argument("-visible_gpus", default='0', type=str)
     
     parser.add_argument("-train_from", default=None, type=str)
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     elif args.task == 'make_data':
         os.chdir(PROJECT_DIR + '/src')
         os.system("python make_data.py -task df")
-        os.system(f"python make_data.py -task train_bert -target_summary_sent abs -n_cpus {args.n_cpus}")
+        os.system(f"python make_data.py -task train_bert -target_summary_sent ext -n_cpus {args.n_cpus}")
         os.system(f"python make_data.py -task test_bert -n_cpus {args.n_cpus}")
 
     # python main.py -task train -target_summary_sent abs -visible_gpus 0
@@ -80,7 +81,7 @@ if __name__ == '__main__':
                 + f" -model_path {MODEL_DIR}/{model_folder}"  \
                 + f" -log_file {LOG_DIR}/train_{model_folder}.log"
 
-        print(do_str)
+    
         os.system(do_str)
 
     # python main.py -task valid -model_path 1209_1236
@@ -95,7 +96,7 @@ if __name__ == '__main__':
         """
         os.system(f"python train.py -task ext -mode validate -test_all True"
             + f" -model_path {MODEL_DIR}/{args.model_path}"
-            + f" -bert_data_path {BERT_DATA_DIR}/valid_abs"
+            + f" -bert_data_path {BERT_DATA_DIR}/valid_ext"# 수정함
             + f" -result_path {RESULT_DIR}/result_{args.model_path}"
             + f" -log_file {LOG_DIR}/valid_{args.model_path}.log"
             + f" -test_batch_size 500  -batch_size 3000"

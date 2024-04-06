@@ -1,4 +1,10 @@
 .vscode/
 __pycache__
 tutorials/.ipynb_checkpoints/
-# temp/
+tutorials/
+temp/
+myvenv
+myvenv2
+ext/
+train_2~3sent/
+valid_2~3sent/

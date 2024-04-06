@@ -122,15 +122,26 @@ class Bert(nn.Module):
 
         self.finetune = finetune
 
+    #def forward(self, x, segs, mask):
+    #    if(self.finetune):
+    #       top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
+            #print(last_hiddens, last_pooling_hiddens, hiddens)
+            # print(top_vec)
+            # top_vec = hiddens[-1]
+    #    else:
+    #        self.eval()
+    #        with torch.no_grad():
+    #            top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
+
     def forward(self, x, segs, mask):
         if(self.finetune):
-            top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
-            #print(last_hiddens, last_pooling_hiddens, hiddens)
-            #top_vec = hiddens[-1]
+            outputs = self.model(x, token_type_ids=segs, attention_mask=mask)
         else:
             self.eval()
             with torch.no_grad():
-                top_vec, _ = self.model(x, token_type_ids=segs, attention_mask=mask)
+                outputs = self.model(x, token_type_ids=segs, attention_mask=mask)
+        top_vec = outputs.last_hidden_state
+       
         return top_vec
 
 
@@ -170,7 +181,11 @@ class ExtSummarizer(nn.Module):
         self.to(device)
 
     def forward(self, src, segs, clss, mask_src, mask_cls):
+        
         top_vec = self.bert(src, segs, mask_src)
+        
+        
+
         sents_vec = top_vec[torch.arange(top_vec.size(0)).unsqueeze(1), clss]
         sents_vec = sents_vec * mask_cls[:, :, None].float()
         sent_scores = self.ext_layer(sents_vec, mask_cls).squeeze(-1)
