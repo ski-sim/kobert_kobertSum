@@ -188,9 +188,9 @@ if __name__ == '__main__':
         os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
         # import data
-        with open(f'{RAW_DATA_DIR}/train_2.jsonl', 'r', encoding='utf-8') as json_file:#수정필수
+        with open(f'{RAW_DATA_DIR}/train.jsonl', 'r', encoding='utf-8') as json_file:#수정필수
             train_json_list = list(json_file)
-        with open(f'{RAW_DATA_DIR}/test.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
+        with open(f'{RAW_DATA_DIR}/valid.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
             test_json_list = list(json_file) 
 
         trains = []
@@ -205,12 +205,12 @@ if __name__ == '__main__':
         # Convert raw data to df
         df = pd.DataFrame(trains)
 
-        #def extract_valid_sentences(row):
-        #    valid_indices = [i for i in row['extractive'] if i is not None]
-        #    print("valid_indices",list(np.array(row['article_original'])[valid_indices]))
-        #    return list(np.array(row['article_original'])[valid_indices])
-        # apply 메서드를 사용하여 함수 적용
-        #df['extractive_sents'] = df.apply(extract_valid_sentences, axis=1) # 수정 필수
+        def extract_valid_sentences(row):
+           valid_indices = [i for i in row['extractive'] if i is not None]
+           #print("valid_indices",list(np.array(row['article_original'])[valid_indices]))
+           return list(np.array(row['article_original'])[valid_indices])
+        #apply 메서드를 사용하여 함수 적용
+        df['extractive_sents'] = df.apply(extract_valid_sentences, axis=1) # 수정 필수
 
 
         # random split
@@ -236,7 +236,7 @@ if __name__ == '__main__':
         os.makedirs(BERT_DATA_DIR, exist_ok=True)
         os.makedirs(LOG_DIR, exist_ok=True)
 
-        for data_type in ['train', 'valid']:
+        for data_type in ['train']:#['train', 'valid']:
             df = pd.read_pickle(f"{RAW_DATA_DIR}/{data_type}_df.pickle")
 
             ## make json file
