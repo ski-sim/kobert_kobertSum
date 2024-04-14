@@ -271,6 +271,16 @@ if __name__ == '__main__':
         os.makedirs(BERT_DATA_DIR, exist_ok=True)
         os.makedirs(LOG_DIR, exist_ok=True)
 
+        with open(f'{RAW_DATA_DIR}/test.jsonl', 'r', encoding='utf-8') as json_file: #수정필수
+            test_json_list = list(json_file) 
+
+        tests = []
+        for json_str in test_json_list:
+            line = json.loads(json_str)
+            tests.append(line)
+
+        test_df = pd.DataFrame(tests)
+        test_df.to_pickle(f"{RAW_DATA_DIR}/test_df.pickle")
         test_df = pd.read_pickle(f"{RAW_DATA_DIR}/test_df.pickle")
         # test_df = pd.read_pickle(f'C:/Users/hws07/Desktop/python_folder/KoBertSum/ext/data/raw/test_df.pickle')
 

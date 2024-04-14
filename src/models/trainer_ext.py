@@ -229,7 +229,7 @@ class Trainer(object):
 
         can_path = '%s_step_%d.candidate' % (self.args.result_path, step)
         gold_path = '%s_step_%d.gold' % (self.args.result_path, step)
-        with open(can_path, 'w') as save_pred:
+        with open(can_path, 'w', encoding='utf-8') as save_pred:
             with open(gold_path, 'w') as save_gold:
                 with torch.no_grad():
                     for batch in test_iter:
@@ -252,10 +252,10 @@ class Trainer(object):
                         else:
                             sent_scores, mask = self.model(src, segs, clss, mask, mask_cls)
 
-                            loss = self.loss(sent_scores, labels.float())
-                            loss = (loss * mask.float()).sum()
-                            batch_stats = Statistics(float(loss.cpu().data.numpy()), len(labels))
-                            stats.update(batch_stats)
+                            #loss = self.loss(sent_scores, labels.float())
+                            #loss = (loss * mask.float()).sum()
+                            #batch_stats = Statistics(float(loss.cpu().data.numpy()), len(labels))
+                            #stats.update(batch_stats)
 
                             sent_scores = sent_scores + mask.float()
                             sent_scores = sent_scores.cpu().data.numpy()
@@ -284,7 +284,7 @@ class Trainer(object):
                                     break
                             
                             if len(_pred) < 3:
-                                print(_pred)
+                                
                                 #print('selected_ids: ', selected_ids)
                                 print('batch.src_str[i]: ', batch.src_str[i])
                                 print('selected_ids[i]: ', selected_ids[i])
@@ -301,8 +301,8 @@ class Trainer(object):
                             gold.append(batch.tgt_str[i])
                         #print(batch.tgt_str)
                         # print(pred)
-                        for i in range(len(gold)):
-                            save_gold.write(gold[i].strip() + '\n')
+                        #for i in range(len(gold)):
+                        #    save_gold.write(gold[i].strip() + '\n',encoding='utf-8')
                         for i in range(len(pred)):
                             save_pred.write(pred[i].strip() + str(pred_idx[i]) + '\n')
         if (step != -1 and self.args.report_rouge):

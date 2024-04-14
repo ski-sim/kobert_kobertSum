@@ -4,3 +4,9 @@ pyrouge==0.1.3
 transformers==3.*  #pytorch-transformers==1.2.0
 tensorboardX==1.9
 torch==1.1.0
+
+1. 5.86
+
+Validation xent: 5.14177 at step 2000
+Validation xent: 5.00448 at step 3000
+Validation xent: 4.96485 at step 4000

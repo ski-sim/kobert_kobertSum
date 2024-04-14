@@ -36,7 +36,7 @@ if __name__ == '__main__':
     test_df = pd.DataFrame(tests)
 
     # 추론결과
-    with open(RESULT_DIR + '/' + sys.argv[1], 'r') as file:
+    with open(RESULT_DIR + '/' + sys.argv[1], 'r', encoding='utf-8') as file:
         lines = file.readlines()
     # print(lines)
     test_pred_list = []
@@ -47,28 +47,49 @@ if __name__ == '__main__':
         test_pred_list.append({'sum_sents_tokenized': sum_sents_text, 
                             'sum_sents_idxes': sum_sents_idx_list
                             })
-
     result_df = pd.merge(test_df, pd.DataFrame(test_pred_list), how="left", left_index=True, right_index=True)
-    result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[row['sum_sents_idxes']])) , axis=1)
+    def safe_summary(row):
+        
+        original = np.array(row['article_original'])
+        print('index::::',original)
+        indices = row['sum_sents_idxes']
+
+        # indices가 리스트인지 확인하고, 그렇지 않으면 적절하게 처리
+        if not isinstance(indices, list):
+            if pd.isna(indices):  # NaN 처리
+                return "No indices provided"
+            indices = [int(indices)]  # 숫자를 리스트로 변환
+
+        if all(idx < len(original) for idx in indices):  # 모든 인덱스 검증
+            return '\n'.join(list(original[indices]))
+        else:
+            return "Invalid index"  # 오류 메시지 반환 또는 다른 처리
+
+    result_df['summary'] = result_df.apply(safe_summary, axis=1)
+
+
+    #result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[row['sum_sents_idxes']])) , axis=1)
+    #result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[list(filter(lambda x: x is not None, row['sum_sents_idxes']))])) , axis=1)
     print(result_df['sum_sents_idxes'])
+    
     result_df.to_csv(RAW_DATA_DIR + '/extractive_sample_submission_v2.csv')
-    # result_df['summary'] = result_df.apply(lambda row: '\n'.join(list(np.array(row['article_original'])[list(filter(lambda x: x is not None, row['sum_sents_idxes']))])) , axis=1)
+    
     submit_df = pd.read_csv(RAW_DATA_DIR + '/extractive_sample_submission_v2.csv')
     submit_df.drop(['summary'], axis=1, inplace=True)
 
-    print(result_df['id'].dtypes)
-    print(submit_df.dtypes)
+    #print(result_df['id'].dtypes)
+    #print(submit_df.dtypes)
 
     result_df['id'] = result_df['id'].astype(int)
-    print(result_df['id'].dtypes)
+    #print(result_df['id'].dtypes)
 
     submit_df  = pd.merge(submit_df, result_df.loc[:, ['id', 'summary']], how="left", left_on="id", right_on="id")
-    print(submit_df.isnull().sum())
+    #print(submit_df.isnull().sum())
 
     ## 결과 통계치 보기
     # word
     abstractive_word_counts = submit_df['summary'].apply(lambda x:len(re.split('\s', x)))
-    print(abstractive_word_counts.describe())
+    #print(abstractive_word_counts.describe())
 
     # export
     now = time.strftime('%y%m%d_%H%M')
